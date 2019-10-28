@@ -1,5 +1,6 @@
 package com.skilldistillery.filmquery.app;
 
+import java.util.List;
 import java.util.Scanner;
 
 import com.skilldistillery.filmquery.database.DatabaseAccessor;
@@ -19,10 +20,15 @@ public class FilmQueryApp {
   private void test(int filmId) {
 	
     Film film = db.findFilmById(filmId);
+    
     	if (film == null) {
     		System.out.println("invalid film selection try again");
     	}
     	else System.out.println(film);
+    	
+    	
+//    Film filmDetails = db.languageMatch(film.getLanguageId());	
+  
   }
 
   private void launch() {
@@ -51,9 +57,17 @@ public class FilmQueryApp {
 	   		break;
 	   		
 	   	case 2: 
-	   		System.out.println("Enter keyword to search for film: ");
-	   		String keyword = input.next();
-	   		db.findFilmByKeyword(keyword);
+	   		String keyword;
+	   		do {
+	   			System.out.println("Enter keyword to search for film: ");
+	   			keyword = input.next();
+	   			List<Film> films = db.findFilmByKeyword(keyword);
+	   			if (films == null) {
+	   				System.out.println("invalid film selection try again");
+	   			}
+	   				else System.out.println(films);
+	    	} while (keyword != "0");
+	   		System.out.println("end of film id lookup");
 	   		break;
 	   	
 	   	case 3:
