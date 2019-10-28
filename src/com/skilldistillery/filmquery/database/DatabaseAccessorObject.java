@@ -24,19 +24,21 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	  
 	try {
 		Connection conn = DriverManager.getConnection(URL, user, pass);
-		String sql = "SELECT id, Title, Release_Year, rating, description, language_id FROM film WHERE id = ? ";
+		String sql = "SELECT film.id, Title, Release_Year, rating, description, film.language_id, language.name "
+				+ "FROM film JOIN language ON film.language_id = language.id WHERE film.id = ?";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setInt(1,filmId);
 		ResultSet filmResult = stmt.executeQuery();
 		if (filmResult.next()) {
 			film = new Film(); // Create the object
 			// Here is our mapping of query columns to our object fields:
-			film.setId(filmResult.getInt("id"));
+			film.setId(filmResult.getInt("film.id"));
 			film.setTitle(filmResult.getString("Title"));
 			film.setReleaseYear(filmResult.getInt("Release_Year"));
 			film.setRating(filmResult.getString("rating"));
 			film.setDescription(filmResult.getString("description"));
 			film.setLanguageId(filmResult.getInt("language_id"));
+			film.setLanguage(filmResult.getString("language.name"));
 		}
 	} catch (SQLException e) {
 		System.out.println("That selection is not available try again");
@@ -52,27 +54,26 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	  String pass = "student";
 	  try {
 	    Connection conn = DriverManager.getConnection(URL, user, pass);
-	    String sql = "SELECT id, title, description, release_year, language_id, rental_duration, "
+	    String sql = "SELECT film.id, title, description, release_year, film.language_id, language.name, rental_duration, "
 	               +" rental_rate, length, replacement_cost, rating, special_features "
-	               +  " FROM film "
-	               + " WHERE title LIKE ?";
+	               +  " FROM film JOIN language ON film.language_id = language.id"
+	               + " WHERE title LIKE ? OR description like ? ";
 	    PreparedStatement stmt = conn.prepareStatement(sql);
 	    stmt.setString(1, "%"+keyword+"%");
+	    stmt.setString(2, "%"+keyword+"%");
 	    ResultSet rs = stmt.executeQuery();
 	    while (rs.next()) {
-	    	int filmId = (rs.getInt(1));
+	    	int filmId = (rs.getInt("film.id"));
 			String title = (rs.getString("title"));
 			String desc = (rs.getString("description"));
 			int releaseYear = (rs.getInt("release_year"));
-			int langId = (rs.getInt("language_id"));
+			int langId = (rs.getInt("film.language_id"));
+			String language = (rs.getString("language.name"));
+			int length = rs.getInt("length");
 			String rating = (rs.getString("rating"));
-			int rentDur = rs.getInt("rental_duration");
-	      double rate = rs.getDouble("rental_rate");
-	      int length = rs.getInt("length");
-	      double repCost = rs.getDouble("replacement_cost");
 	      String features = rs.getString("special_features");
-			Film film = new Film(filmId, title, desc, releaseYear, langId,
-                    rentDur, rate, length, repCost, rating, features);
+			Film film = new Film(filmId, title, desc, releaseYear, langId, language,
+                    length, rating, features, films, length);
 			films.add(film);
 			
 	    }
@@ -83,61 +84,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		  e.printStackTrace();
 	  		}
 	    catch(NullPointerException e ) {
-	        e.printStackTrace();
+	        System.out.println("No films match keyword");;
 	        }
 	  return films;
 	}
-//	  Connection conn;
-//	try {
-//		conn = DriverManager.getConnection(URL, user, pass);
-//		String sql = "SELECT id, Title, Release_Year, rating, description, Language_id FROM film WHERE title LIKE ?";
-//		PreparedStatement stmt = conn.prepareStatement(sql);
-//		stmt.setString(1,"%"+keyword+"%");
-//		ResultSet filmResult = stmt.executeQuery();
-//			if (filmResult.next()) {
-//				film = new Film(); // Create the object
-//				// Here is our mapping of query columns to our object fields:
-//				film.setId(filmResult.getInt(1));
-//				film.setTitle(filmResult.getString(2));
-//				film.setReleaseYear(filmResult.getInt(3));
-//				film.setRating(filmResult.getString(4));
-//				film.setDescription(filmResult.getString(5));
-//				film.setLanguageId(filmResult.getInt(6));
-//			}
-//		} catch (SQLException e) {
-//		e.printStackTrace();
-//	}
-//	
-//	return film;
-//  }
-  public Film languageMatch(int languageId) {
-	  Film filmDetails = null;
-	  String user = "student";
-	  String pass = "student";
-	  
-	  Connection conn;
-	  try {
-		  	conn = DriverManager.getConnection(URL, user, pass);
-	  		String sql = "SELECT film.language_id, language.name "
-	  				+ "FROM film JOIN language ON film.language_id = language.id";
-	  		PreparedStatement stmt = conn.prepareStatement(sql);
-	  		stmt.setInt(1, filmDetails.getLanguageId());
-	  		ResultSet filmResult = stmt.executeQuery();
-	  			if (filmResult.next()) {
-	  				filmDetails = new Film(); // Create the object
-	  				// Here is our mapping of query columns to our object fields:
-	  				filmDetails.setLanguageId(filmResult.getInt(1));
-	  				filmDetails.setLanguage(filmResult.getString(2));
-	  			}
-	  		} catch (SQLException e) {
-	  			e.printStackTrace();
-	  		}
-	  return filmDetails;
-  }
-  
-  	@Override
-  		public Actor findActorById(int actorId) {
-  			// TODO Auto-generated method stub
-  		return null;
-}
 }
