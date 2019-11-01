@@ -11,7 +11,7 @@ import com.skilldistillery.filmquery.entities.Film;
 public class FilmQueryApp {
   
   DatabaseAccessor db = new DatabaseAccessorObject();
-
+  int exit = 0;
   public static void main(String[] args) {
     FilmQueryApp app = new FilmQueryApp();
     
@@ -21,9 +21,12 @@ public class FilmQueryApp {
   private void launch() {
     Scanner input = new Scanner(System.in);
     
+    do {
     menu();
     
     startUserInterface(input);
+    
+    } while (exit != 3);
     
     input.close();
   }
@@ -70,12 +73,13 @@ public class FilmQueryApp {
 	   				}
 	   			
 	    	} while (!keyword.equals( "0"));
-	   		System.out.println("end of film id lookup");
+	   		System.out.println("end of film keyword lookup");
 	   		break;
 	   	
 	   	case 3:
 	   		//quit
-	   		System.out.println("Have a good day");
+	   		exit = 3;
+	   		System.out.println("End of program. Have a good day.");
 	   		break;
 	   		
 	   	default:
