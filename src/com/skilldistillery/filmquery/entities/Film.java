@@ -16,6 +16,7 @@ public class Film {
 	private List<Film> films;
 	private double rate;
 	private String actor;
+	private List<Actor> actors;
 
 	public Film(int id, String title, String description, int releaseYear, int languageId, String language, int length,
 			String rating, String specialFeatures, List<Film> films, double rate, String actor) {
@@ -137,7 +138,7 @@ public class Film {
 	@Override
 	public String toString() {
 		return "Film [id=" + id + ", title=" + title + ", description=" + description + ",\nreleaseYear=" + releaseYear
-				+ ", language=" + language + ", rating=" + rating + ", actors=" + actor +"]\n\n";
+				+ ", language=" + language + ", rating=" + rating + ", actors=" + actors +"]\n\n";
 	}
 
 	public double getRate() {
@@ -158,6 +159,14 @@ public class Film {
 
 	public void setReleaseYear(int releaseYear) {
 		this.releaseYear = releaseYear;
+	}
+
+	public List<Actor> getActors() {
+		return actors;
+	}
+
+	public void setActors(List<Actor> actors) {
+		this.actors = actors;
 	}
 
 }

@@ -50,6 +50,10 @@ public class Actor {
 	public void setFilms(List<Film> films) {
 		this.films = films;
 	}
+	@Override
+	public String toString() {
+		return firstName + " " + lastName ;
+	}
 	
 	
 }
